@@ -354,29 +354,30 @@ impl AflConfig {
         afl_show_map
             .args(&["-t", "5000", "-m", "none", "-b", "-o"])
             .arg(testcase_bitmap.as_ref())
-            .env("AFL_MAP_SIZE", "65536")
             .args(insert_input_file(&self.target_command, &testcase))
-            .stdout(Stdio::null())
-            .stderr(Stdio::null())
-            .stdin(if self.use_standard_input {
-                Stdio::piped()
-            } else {
-                Stdio::null()
-            });
+            .args(&[format!("<{}", &testcase)])
+            .env("AFL_MAP_SIZE", "65536");
+            //.stdout(Stdio::null())
+            //.stderr(Stdio::null())
+            //.stdin(if self.use_standard_input {
+            //    Stdio::piped()
+            //} else {
+            //    Stdio::null()
+            //});
 
         log::debug!("Running afl-showmap as follows: {:?}", &afl_show_map);
         let mut afl_show_map_child = afl_show_map.spawn().context("Failed to run afl-showmap")?;
 
-        if self.use_standard_input {
-            io::copy(
-                &mut File::open(&testcase)?,
-                afl_show_map_child
-                    .stdin
-                    .as_mut()
-                    .expect("Failed to open the stardard input of afl-showmap"),
-            )
-            .context("Failed to pipe the test input to afl-showmap")?;
-        }
+        //if self.use_standard_input {
+        //    io::copy(
+        //        &mut File::open(&testcase)?,
+        //        afl_show_map_child
+        //            .stdin
+        //            .as_mut()
+        //            .expect("Failed to open the stardard input of afl-showmap"),
+        //    )
+        //    .context("Failed to pipe the test input to afl-showmap")?;
+        //}
 
         let afl_show_map_status = afl_show_map_child
             .wait()
