@@ -73,13 +73,13 @@ impl AflMap {
     /// coverage.
     pub fn merge(&mut self, other: &AflMap) -> bool {
         let mut interesting = false;
-        //println!("Merging");
-        //println!("Size of data: {si}", si=self.data.len());
-        //println!("Size of other data: {si}", si=other.data.len());
+        println!("Merging");
+        println!("Size of data: {si}", si=self.data.len());
+        println!("Size of other data: {si}", si=other.data.len());
         // The first time merge is called self.data will be empty.
         // Thus in that case we simply clone the other vector.
         if self.data.len() == 0 {
-            //println!("own data is zero");
+            println!("own data is zero");
             self.data = other.data.clone();
             interesting = true;
         }
@@ -350,9 +350,11 @@ impl AflConfig {
         if self.use_qemu_mode {
             afl_show_map.arg("-Q");
         }
+        println!("run_showmap");
         afl_show_map
             .args(&["-t", "5000", "-m", "none", "-b", "-o"])
             .arg(testcase_bitmap.as_ref())
+            .env("AFL_MAP_SIZE", "65536")
             .args(insert_input_file(&self.target_command, &testcase))
             .stdout(Stdio::null())
             .stderr(Stdio::null())
