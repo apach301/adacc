@@ -355,7 +355,7 @@ impl AflConfig {
             .args(&["-t", "5000", "-m", "none", "-b", "-o"])
             .arg(testcase_bitmap.as_ref())
             .args(insert_input_file(&self.target_command, &testcase))
-            .args(&[format!("<{}", &testcase)])
+            .args(&[format!("<{}", testcase.as_ref().as_os_str().to_str().unwrap())])
             .env("AFL_MAP_SIZE", "65536");
             //.stdout(Stdio::null())
             //.stderr(Stdio::null())
